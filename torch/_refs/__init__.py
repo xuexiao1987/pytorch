@@ -230,6 +230,7 @@ __all__ = [
     "empty",
     "empty_like",
     "empty_strided",
+    "eye",
     "full",
     "full_like",
     "ones",
@@ -3428,6 +3429,48 @@ def empty_strided(
         device=device,
         requires_grad=requires_grad,
     )
+
+
+@register_decomposition(torch.ops.aten.eye)
+@out_wrapper()
+def eye(
+    n: int,
+    m: Optional[int] = None,
+    *,
+    dtype: Optional[torch.dtype] = None,
+    layout: torch.layout = torch.strided,
+    device: Optional[torch.device] = None,
+    pin_memory: bool = False,
+    requires_grad: bool = False,
+) -> TensorLikeType:
+    """
+    Reference implementation of torch.eye
+    """
+    if m is None:
+        m = n
+
+    check(n >= 0, lambda: f"n must be greater or equal to 0, got {n}")
+    check(m >= 0, lambda: f"m must be greater or equal to 0, got {m}")
+
+    range_n = torch.arange(0, n, dtype=torch.int64, device=device, requires_grad=False)
+    range_m = torch.arange(0, m, dtype=torch.int64, device=device, requires_grad=False)
+
+    cond = range_n.unsqueeze(-1) == range_m
+    tmp = torch.where(cond, 1, 0)
+
+    result = torch.empty(
+        (n, m),
+        dtype=dtype,
+        device=device,
+        pin_memory=pin_memory,
+        layout=layout,
+        requires_grad=requires_grad,
+    )
+
+    # cast to the right dtype and convert from a view
+    copy_to(result, tmp)
+
+    return result
 
 
 # TODO: missing kwargs (e.g. layout)
