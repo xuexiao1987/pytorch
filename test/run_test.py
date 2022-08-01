@@ -935,7 +935,7 @@ def main():
         selected_tests = get_reordered_tests(selected_tests)
         # downloading test cases configuration to local environment
         get_test_case_configs(dirpath=test_directory)
-
+    selected_tests = ["test_jit_fuser_te"]
     has_failed = False
     failure_messages = []
     try:
