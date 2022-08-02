@@ -4402,5 +4402,27 @@ class TestCudaComm(TestCase):
             cat = torch.cat((outputs[0][i].to('cpu'), outputs[1][i].to('cpu')))
             self.assertTrue(torch.equal(x, cat))
 
+    def test_memory_snapshot(self):
+        torch.cuda.memory.enable_memory_history()
+        x = torch.rand(311, 411).cuda()
+        ss = torch.cuda.memory.snapshot()
+        import pickle
+        open('hi', 'wb').write(pickle.dumps(ss))
+        found_it = False
+        for seg in ss:
+            for b in seg['blocks']:
+                if 'history' in b:
+                    for h in b['history']:
+                        if h['real_size'] == 311*411*4:
+                            found_it = True
+        self.assertTrue(found_it)
+        if not IS_WINDOWS:
+            with tempfile.NamedTemporaryFile() as f:
+                torch.cuda.memory.save_segment_usage(f.name)
+                with open(f.name, 'r') as f2:
+                    self.assertTrue('test_cuda.py' in f2.read())
+
+
+
 if __name__ == '__main__':
     run_tests()
