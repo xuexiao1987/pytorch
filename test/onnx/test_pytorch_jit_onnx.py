@@ -21,7 +21,7 @@ def _jit_graph_to_onnx_model(graph, operator_export_type, opset_version):
     graph = torch.onnx.utils._optimize_graph(
         graph, operator_export_type, params_dict={}
     )
-    proto, _, _, _ = graph._export_onnx(
+    proto, _, _ = graph._export_onnx(
         {},
         opset_version,
         {},
