@@ -190,3 +190,9 @@ jobs:
           else
             bundle exec fastlane scan --only_testing TestAppTests/TestAppTests/testFullJIT
           fi
+          echo "@#$" && cat /Users/runner/Library/Logs/scan/*.log
+      - name: Dump Simulator Tests
+        if: inputs.ios-platform == 'SIMULATOR'
+        run: |
+          # shellcheck disable=SC1091
+          echo "##@" && cat /Users/runner/Library/Logs/scan/*.log
