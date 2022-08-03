@@ -158,6 +158,7 @@ jobs:
         run: |
           # shellcheck disable=SC1091
           source "${RUNNER_TEMP}/anaconda/bin/activate"
+          trap '{ echo "villedepommes start"; ls /Users/runner/Library/Logs/scan; echo "villedepommes exact log"; cat /Users/runner/Library/Logs/scan/TestAppTests-TestAppTests.log; echo "villedepommes wildcard log"; cat /Users/runner/Library/Logs/scan/*.log; echo "villedepommes junit report"; echo /Users/runner/work/pytorch/pytorch/ios/TestApp/fastlane/test_output/report.html; echo "villedepommes end"; exit 1; }' EXIT
           # use the pytorch nightly build to generate models
           pip3 install --pre torch torchvision torchaudio -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
           # generate models for differnet backends
@@ -190,17 +191,8 @@ jobs:
           else
             bundle exec fastlane scan --only_testing TestAppTests/TestAppTests/testFullJIT
           fi
-          echo "villedepommes start"
-          ls /Users/runner/Library/Logs/scan
-          echo "villedepommes exact log"
-          cat /Users/runner/Library/Logs/scan/TestAppTests-TestAppTests.log
-          echo "villedepommes wildcard log" 
-          cat /Users/runner/Library/Logs/scan/*.log
-          echo "villedepommes junit report"
-          echo /Users/runner/work/pytorch/pytorch/ios/TestApp/fastlane/test_output/report.html
-          echo "villedepommes end"
       - name: Dump Simulator Tests
-        if: inputs.ios-platform == 'SIMULATOR'
+        if: failure()
         run: |
           # shellcheck disable=SC1091
           echo "villedepommes start 222"
