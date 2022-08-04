@@ -177,9 +177,9 @@ class CUDAHostAllocator {
     // Round up the allocation to the nearest power of two to improve reuse.
     void* ptr = nullptr;
     C10_CUDA_CHECK(cudaHostAlloc(
-        &ptr, c10::llvm::PowerOf2Ceil(size), cudaHostAllocDefault));
+        &ptr, size, cudaHostAllocDefault));
     auto block = new Block();
-    block->size_ = c10::llvm::PowerOf2Ceil(size);
+    block->size_ = size;
     block->ptr_ = ptr;
     block->allocated_ = true;
 
