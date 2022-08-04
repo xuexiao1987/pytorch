@@ -199,7 +199,7 @@ jobs:
           ls /Users/runner/Library/Logs/scan
           echo "villedepommes exact log 222"
           cat /Users/runner/Library/Logs/scan/TestAppTests-TestAppTests.log
-          echo "villedepommes wildcard log 222" 
+          echo "villedepommes wildcard log 222"
           cat /Users/runner/Library/Logs/scan/*.log
           echo "villedepommes junit report 222"
           echo /Users/runner/work/pytorch/pytorch/ios/TestApp/fastlane/test_output/report.html
